@@ -18,40 +18,7 @@ struct node{
 };
 struct node *head = NULL;
 
-void createEvent(){
-    int year;
-    int month;
-    int day;
-    int hour;
-    char eventDescription[100];
-
-    //Demander les inputs utilisateur
-    printf("\n");
-    printf("/!\\ Les dates doivent êtres entrées en chiffres svp /!\\\n");
-    printf("Entrez le jour de l'événement : ");
-    scanf("%d", &day);
-
-    printf("Entrez le mois de l'événement : ");
-    scanf("%d", &month);
-
-    printf("Entrez l'année de l'événement : ");
-    scanf("%d", &year);
-
-    printf("Entrez l'heure de l'événement : ");
-    scanf("%d", &hour);
-
-    printf("Entrez la description de l'événement (100 caractères maximum - évitez les accents) : ");
-    //Flusher les possible caracteres end of line restant dans le buffer d'input pour éviter le fgets() de se faire skipper si il choppe un eol ou eof
-    char c; //Variable bidon
-    while ((c = getchar()) != '\n' && c != EOF);
-    //Ici on utilise fgets() à la place de scanf() pour pouvoir prendre des éventuelles caractères espace
-    fgets(eventDescription, 100, stdin);
-
-    printf("| Résumé de votre événement : \n");
-    printf("| Date : %d/%d/%d à %dh \n", day, month, year, hour);
-    printf("| Description : %s \n", eventDescription);
-    printf("\n");
-
+void addEvent(int day, int month, int year, int hour, char eventDescription[100]){
     //Créer le nouveau noeud et lui allouer la mémoire
     struct node *newNode = NULL;
     newNode = malloc(sizeof(struct node));
@@ -105,8 +72,45 @@ void createEvent(){
     }
 }
 
-void addEvent(){
-    
+void createEvent(){
+    int year;
+    int month;
+    int day;
+    int hour;
+    char eventDescription[100];
+
+    //Demander les inputs utilisateur
+    printf("\n");
+    printf("/!\\ Les dates doivent êtres entrées en chiffres svp /!\\\n");
+    printf("Entrez le jour de l'événement : ");
+    scanf("%d", &day);
+
+    printf("Entrez le mois de l'événement : ");
+    scanf("%d", &month);
+
+    printf("Entrez l'année de l'événement : ");
+    scanf("%d", &year);
+
+    printf("Entrez l'heure de l'événement : ");
+    scanf("%d", &hour);
+
+    printf("Entrez la description de l'événement (100 caractères maximum - évitez les accents) : ");
+    //Flusher les possible caracteres end of line restant dans le buffer d'input pour éviter le fgets() de se faire skipper si il choppe un eol ou eof
+    char c; //Variable bidon
+    while ((c = getchar()) != '\n' && c != EOF);
+    //Ici on utilise fgets() à la place de scanf() pour pouvoir prendre des éventuelles caractères espace
+    fgets(eventDescription, 100, stdin);
+    //Enlever le eol de eventDescription
+    int len = strlen(eventDescription);
+    eventDescription[len-1]='\0';
+
+    printf("| Résumé de votre événement : \n");
+    printf("| Date : %d/%d/%d à %dh \n", day, month, year, hour);
+    printf("| Description : %s \n", eventDescription);
+    printf("\n");
+
+    //Ajouter le noeud
+    addEvent(day, month, year, hour, eventDescription);
 }
 
 void deleteEvent(){
@@ -143,7 +147,7 @@ void saveCalendar(){
 
     //Ecrire les données dans le calendrier
     while(testNode != NULL) {
-        fprintf(filePointer, "%d %d/%d/%d %d %s", testNode->nodeId, testNode->day, testNode->month, testNode->year, testNode->hour, testNode->eventDescription);
+        fprintf(filePointer, "%d %d/%d/%d %d %s\n", testNode->nodeId, testNode->day, testNode->month, testNode->year, testNode->hour, testNode->eventDescription);
 
         //Passer au noeud suivant
         testNode = testNode->next;
@@ -174,7 +178,7 @@ void loadCalendar(){
 
     //Ouvrir le calendrier
     FILE *filePointer;
-    filePointer = fopen("Anniversaire.txt","r");
+    filePointer = fopen("test2.txt","r");
 
     //Vérifier que le calendrier existe
     if (filePointer == NULL) {
@@ -183,114 +187,126 @@ void loadCalendar(){
     else{
         ch = fgetc(filePointer);
 
-        do {
+        if(ch == '\n' || ch == EOF){
+            printf("Fin du fichier");
+        }
+        else{
+        
+            do {
 
-            //---------------------------- Récupérer l'ID ----------------------------
-            printf("Id :");
-            while (ch != ' ') {
-                //Ajouter le caractère à la fin de la variable string
-                strncat(nodeIdStr, &ch, 1);
+                //---------------------------- Récupérer l'ID ----------------------------
+                printf("Id :");
+                while (ch != ' ') {
+                    //Ajouter le caractère à la fin de la variable string
+                    strncat(nodeIdStr, &ch, 1);
 
-                //Récupérer le caractère suivant
-                ch = fgetc(filePointer);
-            }
-            //Convertir la variable string en int
-            nodeId = strtol(nodeIdStr, NULL, 10);
-            printf("%d", nodeId);
-            //Vider nodeIdStr
-            strcpy(nodeIdStr, "");
-            printf("\n");
+                    //Récupérer le caractère suivant
+                    ch = fgetc(filePointer);
+                }
+                //Convertir la variable string en int
+                nodeId = strtol(nodeIdStr, NULL, 10);
+                printf("%d", nodeId);
+                //Vider nodeIdStr
+                strcpy(nodeIdStr, "");
+                printf("\n");
 
-            printf(" Jour :");
-            while (ch != '/'){
-                //Récupérer le caractère suivant
-                ch = fgetc(filePointer);
+                //---------------------------- Récupérer le jour ----------------------------
+                printf(" Jour :");
+                while (ch != '/'){
+                    //Récupérer le caractère suivant
+                    ch = fgetc(filePointer);
 
-                //Ajouter le caractère à la fin de la variable string
-                strncat(dayStr, &ch, 1);
-            }
-            //Convertir la variable string en int
-            day = strtol(dayStr, NULL, 10);
-            printf("%d", day);
-            //Vider dayStr
-            strcpy(dayStr, "");
-            printf("\n");
-
-            //Récupérer le caractère suivant
-            ch = fgetc(filePointer);
-
-            //---------------------------- Récupérer le mois ----------------------------
-            strcpy(monthStr, "");
-            printf(" Mois :");
-            while (ch != '/'){
-                //Ajouter le caractère à la fin de la variable string
-                strncat(monthStr, &ch, 1);
+                    //Ajouter le caractère à la fin de la variable string
+                    strncat(dayStr, &ch, 1);
+                }
+                //Convertir la variable string en int
+                day = strtol(dayStr, NULL, 10);
+                printf("%d", day);
+                //Vider dayStr
+                strcpy(dayStr, "");
+                printf("\n");
 
                 //Récupérer le caractère suivant
                 ch = fgetc(filePointer);
-            }
-            //Convertir la variable string en int
-            month = strtol(monthStr, NULL, 10);
-            printf("%d", month);
-            //Vider monthStr
-            strcpy(monthStr, "");
-            printf("\n");
 
-            //Récupérer le caractère suivant
-            ch = fgetc(filePointer);
+                //---------------------------- Récupérer le mois ----------------------------
+                strcpy(monthStr, "");
+                printf(" Mois :");
+                while (ch != '/'){
+                    //Ajouter le caractère à la fin de la variable string
+                    strncat(monthStr, &ch, 1);
 
-            //---------------------------- Récupérer l'année ----------------------------
-            printf(" Année :");
-            while (ch != ' '){
-                //Ajouter le caractère à la fin de la variable string
-                strncat(yearStr, &ch, 1);
-
-                //Récupérer le caractère suivant
-                ch = fgetc(filePointer);
-            }
-            //Convertir la variable string en int
-            year = strtol(yearStr, NULL, 10);
-            printf("%d", year);
-            //Vider yearStr
-            strcpy(yearStr, "");
-            printf("\n");
-
-            //Récupérer le caractère suivant
-            ch = fgetc(filePointer);
-
-            //---------------------------- Récupérer l'heure ----------------------------
-            printf(" Heure :");
-            while (ch != ' '){
-                //Ajouter le caractère à la fin de la variable string
-                strncat(hourStr, &ch, 1);
+                    //Récupérer le caractère suivant
+                    ch = fgetc(filePointer);
+                }
+                //Convertir la variable string en int
+                month = strtol(monthStr, NULL, 10);
+                printf("%d", month);
+                //Vider monthStr
+                strcpy(monthStr, "");
+                printf("\n");
 
                 //Récupérer le caractère suivant
                 ch = fgetc(filePointer);
-            }
-            //Convertir la variable string en int
-            hour = strtol(hourStr, NULL, 10);
-            printf("%d", hour);
-            //Vider hourStr
-            strcpy(hourStr, "");
-            printf("\n");
 
-            //---------------------------- Récupérer la description ----------------------------
-            printf(" Description :");
-            while (ch != '\n'){
-                //Ajouter le caractère à la fin de la variable string
-                strncat(eventDescription, &ch, 1);
+                //---------------------------- Récupérer l'année ----------------------------
+                printf(" Année :");
+                while (ch != ' '){
+                    //Ajouter le caractère à la fin de la variable string
+                    strncat(yearStr, &ch, 1);
+
+                    //Récupérer le caractère suivant
+                    ch = fgetc(filePointer);
+                }
+                //Convertir la variable string en int
+                year = strtol(yearStr, NULL, 10);
+                printf("%d", year);
+                //Vider yearStr
+                strcpy(yearStr, "");
+                printf("\n");
 
                 //Récupérer le caractère suivant
                 ch = fgetc(filePointer);
-            }
-            printf("%s", eventDescription);
-            //Vider eventDescription
-            strcpy(eventDescription, "");
-            printf("\n");
 
-            ch = fgetc(filePointer);
+                //---------------------------- Récupérer l'heure ----------------------------
+                printf(" Heure :");
+                while (ch != ' '){
+                    //Ajouter le caractère à la fin de la variable string
+                    strncat(hourStr, &ch, 1);
 
-        }while (ch != EOF);
+                    //Récupérer le caractère suivant
+                    ch = fgetc(filePointer);
+                }
+                //Convertir la variable string en int
+                hour = strtol(hourStr, NULL, 10);
+                printf("%d", hour);
+                //Vider hourStr
+                strcpy(hourStr, "");
+                printf("\n");
+
+                //---------------------------- Récupérer la description ----------------------------
+                printf(" Description :");
+                while (ch != '\n'){
+                    //Ajouter le caractère à la fin de la variable string
+                    strncat(eventDescription, &ch, 1);
+
+                    //Récupérer le caractère suivant
+                    ch = fgetc(filePointer);
+                }
+                printf("%s", eventDescription);
+                printf("\n");
+
+                ch = fgetc(filePointer);
+
+                //--------------------------------- Ajouter le noeud ---------------------------------
+                addEvent(day, month, year, hour, eventDescription);
+
+                //Vider eventDescription
+                strcpy(eventDescription, "");
+
+            }while (ch != EOF);
+
+        }
     }
 
     fclose(filePointer);
@@ -306,7 +322,7 @@ void printCalendar(){
         printf("____\n");
         printf("| Id de l'événement : %d\n", testNode->nodeId);
         printf("| Date : %d/%d/%d à %dh \n", testNode->day, testNode->month, testNode->year, testNode->hour);
-        printf("| Description : %s", testNode->eventDescription);
+        printf("| Description : %s\n", testNode->eventDescription);
 
         //Passer au noeud suivant
         testNode = testNode->next;
