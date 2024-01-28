@@ -4,15 +4,32 @@
 #include <string.h>
 #include "nodeStruct.h"
 #include "printCalendar.h"
+#include "testInput.h"
+#include "convertInputToString.h"
 
 int deleteEvent(struct node *head, int nodeId){
     int idOfEventToDelete;
+    char strIdOfEventToDelete[100];
+
     bool isEventFound = false;
     struct node *previousNode = head;
     printf("\nVoici les evenements disponibles : \n");
     printCalendar(head, nodeId);
-    printf("\nEntrez l'Id de l'evenement que vous souhaitez supprimer :");
-    scanf("%d", &idOfEventToDelete);
+
+    //Tester si l'input est bien un int
+    while(!testInput(strIdOfEventToDelete)){
+        printf("\nEntrez l'Id de l'evenement que vous souhaitez supprimer :");
+        scanf("%s", strIdOfEventToDelete);
+
+        if(!testInput(strIdOfEventToDelete)){
+            printf("Veuillez entrer un numero valide svp\n");
+        }
+        else{
+            idOfEventToDelete = convertInputToString(strIdOfEventToDelete);
+        }
+    }
+    strcpy(strIdOfEventToDelete, "");
+
     printf("\n");
 
     //Parcourir la liste chainée pour trouvé l'événement avec l'id correspondant

@@ -9,6 +9,8 @@
 #include "saveCalendar.h"
 #include "loadCalendar.h"
 #include "printCalendar.h"
+#include "testInput.h"
+#include "convertInputToString.h"
 
 
 //Le nodeId est un identifiant unique à chaque noeud
@@ -28,7 +30,8 @@ int main() {
     head->next = NULL;
     
 
-    int value;
+    char strValue[100] = " ";
+    int value = 0;
 
     while(value != 6){
         printf("_______________________________\n");
@@ -41,8 +44,18 @@ int main() {
         printf("| 6 - Quitter                 |\n");
         printf("|_____________________________|\n");
 
-        printf("Entrez le numero de votre choix : ");
-        scanf("%d", &value);
+        //Tester si l'input est bien un int
+        while(!testInput(strValue)){
+            printf("Entrez le numero de votre choix : ");
+            scanf("%s", strValue);
+
+            if(!testInput(strValue)){
+                printf("Veuillez entrer un numero valide svp\n");
+            }
+            else{
+                value = convertInputToString(strValue);
+            }
+        }
 
         switch( value ) {
             case 1:
@@ -67,6 +80,9 @@ int main() {
             default:
                 printf( "Entrer un nombre compris dans le menu svp\n" );
         }
+
+        //Vider strValue
+        strcpy(strValue, "");
 
         printf("\n");
     }

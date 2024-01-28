@@ -1,0 +1,1 @@
+int convertInputToString(char strInput[100]);

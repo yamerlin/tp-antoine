@@ -8,7 +8,7 @@
 EXEC=main
 
 #Liste des fichiers sources separes par des espaces
-SOURCES=main.c addEvent.c createEvent.c deleteEvent.c loadCalendar.c printCalendar.c saveCalendar.c
+SOURCES=main.c addEvent.c createEvent.c deleteEvent.c loadCalendar.c printCalendar.c saveCalendar.c testInput.c convertInputToString.c
 #Liste des fichiers objets
 OBJETS=$(SOURCES:%.c=%.o)
 
@@ -19,7 +19,7 @@ CFLAGS= -std=c99 -g -O0 -Wall -Wextra
 
 
 #R?le explicite de construction de l'ex?utable
-$(EXEC):$(OBJETS) Makefile
+$(EXEC):$(OBJETS)
 	$(CCPP) -o  $(EXEC) $(OBJETS) $(LFLAGS)
 .c.o:
 	$(CCPP) $(CFLAGS) -c $< -o $@ $(LFLAGS)
@@ -36,11 +36,13 @@ depend:
 	rm dependances
 
 #DEPENDANCIES
-main.o: main.c addEvent.o createEvent.o deleteEvent.o loadCalendar.o printCalendar.o saveCalendar.o nodeStruct.h 
+main.o: main.c addEvent.o createEvent.o deleteEvent.o loadCalendar.o printCalendar.o saveCalendar.o testInput.o convertInputToString.o nodeStruct.h 
 addEvent.o: addEvent.c nodeStruct.h
-createEvent.o: createEvent.c nodeStruct.h addEvent.o
-deleteEvent.o: deleteEvent.c nodeStruct.h
+createEvent.o: createEvent.c nodeStruct.h addEvent.o testInput.o convertInputToString.o
+deleteEvent.o: deleteEvent.c nodeStruct.h testInput.o convertInputToString.o
 loadCalendar.o: loadCalendar.c nodeStruct.h addEvent.o
 printCalendar.o: printCalendar.c nodeStruct.h
 saveCalendar.o: saveCalendar.c nodeStruct.h
+testInput.o: testInput.c
+convertInputToString.o: convertInputToString.c
 
