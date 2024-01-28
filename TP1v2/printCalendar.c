@@ -10,7 +10,7 @@ int printCalendar(struct node *head, int nodeId){
     testNode = testNode->next;
     printf("\n");
 
-    while(testNode != NULL) {
+    while(testNode != NULL){
         printf("____\n");
         printf("| Id de l'evenement : %d\n", testNode->nodeId);
         printf("| Date : %d/%d/%d a %dh \n", testNode->day, testNode->month, testNode->year, testNode->hour);
@@ -19,6 +19,11 @@ int printCalendar(struct node *head, int nodeId){
         //Passer au noeud suivant
         testNode = testNode->next;
     }
+    
+    // else{
+    //     printf("La liste est vide");
+    // }
+    
     printf("\n");
 
     return nodeId;

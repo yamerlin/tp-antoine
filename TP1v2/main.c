@@ -10,8 +10,6 @@
 #include "loadCalendar.h"
 #include "printCalendar.h"
 
-//Création du noeud de tête
-struct node *head = NULL;
 
 //Le nodeId est un identifiant unique à chaque noeud
 //Il sera utilisé principalement pour choisir un noeud quand on veut le supprimer car c'est la seule manière de diffèrencier deux noeud ayant exactement la même date et la même heure
@@ -20,9 +18,15 @@ int nodeId = 0;
 
 int main() {
 
+    //Création du noeud de tête
+    struct node *head = NULL;
+
+
     //Init le noeud de tete
+    //free(head);
     head = malloc(sizeof(struct node));
     head->next = NULL;
+    
 
     int value;
 
